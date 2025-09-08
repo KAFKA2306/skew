@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "kafka-mini-one",
+  "version": "0.1.0",
+  "identifier": "com.example.kafka-mini-one",
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "kafka-mini-one",
+        "width": 800,
+        "height": 600
+      }
+    ]
+  },
+  "bundle": {
+    "icon": ["icons/icon.svg"]
+  }
+}
