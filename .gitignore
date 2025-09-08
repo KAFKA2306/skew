@@ -8,3 +8,8 @@ src-tauri/gen/
 
 # Ignore PNG icons
 *.png
+
+
+# Added by cargo
+
+/target
