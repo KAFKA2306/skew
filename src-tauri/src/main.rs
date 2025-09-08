@@ -232,29 +232,38 @@ struct Quote { close: Option<Vec<Option<f64>>> }
 #[derive(Deserialize)]
 struct Meta { symbol: String, timezone: String }
 
-// ---- キャッシュシステム ----
-#[derive(Serialize, Deserialize, Clone)]
+// ---- 改良されたキャッシュデータ構造 ----
+#[derive(Serialize, Deserialize, Clone, Debug)]
 struct CachedData {
-  data: SeriesPayload,
-  analysis: AnalysisResult,
-  cached_at: chrono::DateTime<Utc>,
-  ttl_minutes: i64,
+    data: Arc<SeriesPayload>, // Arc使用でクローンコスト削減
+    analysis: Arc<AnalysisResult>,
+    cached_at: chrono::DateTime<Utc>,
+    ttl_minutes: i64,
 }
-
-#[derive(Serialize, Deserialize, Clone)]
-struct CacheEntry {
-  key: String,
-  cached_data: CachedData,
-}
-
-type CacheStore = Arc<Mutex<HashMap<String, CachedData>>>;
 
 impl CachedData {
-  fn is_expired(&self) -> bool {
-    let now = Utc::now();
-    let expiry = self.cached_at + Duration::minutes(self.ttl_minutes);
-    now > expiry
-  }
+    fn new(data: SeriesPayload, analysis: AnalysisResult, ttl_minutes: i64) -> Self {
+        Self {
+            data: Arc::new(data),
+            analysis: Arc::new(analysis),
+            cached_at: Utc::now(),
+            ttl_minutes,
+        }
+    }
+
+    fn is_expired(&self) -> bool {
+        let now = Utc::now();
+        let expiry = self.cached_at + Duration::minutes(self.ttl_minutes);
+        now > expiry
+    }
+}
+
+#[derive(Serialize, Debug)]
+struct CacheEntryInfo {
+    key: String,
+    cached_at: String,
+    ttl_minutes: i64,
+    data_points: usize,
 }
 
 // ---- 画面へ返す系列＆解析結果 ----
@@ -277,126 +286,199 @@ struct AnalysisResult {
   returns: Vec<f64>,
 }
 
-// ---- キャッシュ付き取得：Yahoo Finance ----
-#[tauri::command]
-async fn fetch_yahoo(symbol: String, range: String, interval: String, cache: tauri::State<'_, CacheStore>) -> Result<SeriesPayload, String> {
-  let cache_key = format!("{}_{}_{}",symbol, range, interval);
-  
-  // キャッシュチェック
-  {
-    let cache_guard = cache.lock().map_err(|_| "キャッシュロック失敗")?;
-    if let Some(cached_data) = cache_guard.get(&cache_key) {
-      if !cached_data.is_expired() {
-        let mut result = cached_data.data.clone();
-        result.cached = Some(true);
-        result.cached_at = Some(cached_data.cached_at.to_rfc3339());
-        return Ok(result);
-      }
-    }
-  }
-
-  // 新規取得
-  let url = format!(
-    "https://query1.finance.yahoo.com/v8/finance/chart/{}?range={}&interval={}&events=div,splits",
-    urlencoding::encode(&symbol), range, interval
-  );
-  let resp = reqwest::Client::new()
-    .get(&url).header("User-Agent", "Mozilla/5.0 (Tauri)")
-    .send().await.map_err(|e| e.to_string())?;
-  if !resp.status().is_success() {
-    return Err(format!("HTTP {}: {}", resp.status(), url));
-  }
-  let data: ChartResponse = resp.json().await.map_err(|e| e.to_string())?;
-  let result = data.chart.result.ok_or("No result")?
-    .into_iter().next().ok_or("Empty result")?;
-  let timestamps = result.timestamp.unwrap_or_default();
-  let closes = result.indicators.quote.get(0)
-    .and_then(|q| q.close.clone()).ok_or("No close data")?;
-
-  let mut dates = Vec::new();
-  let mut prices = Vec::new();
-  for (i, ts) in timestamps.iter().enumerate() {
-    if let Some(Some(c)) = closes.get(i).map(|x| x.as_ref()) {
-      let dt = Utc.timestamp_opt(*ts, 0).single()
-        .unwrap_or_else(|| Utc.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(*ts, 0).unwrap()));
-      dates.push(dt.date_naive().to_string()); // YYYY-MM-DD
-      prices.push(*c);
-    }
-  }
-  if prices.len() < 2 { return Err("価格データが不足しています".into()); }
-  
-  let series = SeriesPayload { 
-    symbol: result.meta.symbol, 
-    dates, 
-    prices, 
-    cached: Some(false),
-    cached_at: None 
-  };
-  
-  // 解析実行
-  let analysis = analyze_series_internal(series.prices.clone())?;
-  
-  // キャッシュに保存 (15分TTL)
-  let cached_data = CachedData {
-    data: series.clone(),
-    analysis,
-    cached_at: Utc::now(),
-    ttl_minutes: 15,
-  };
-  
-  {
-    let mut cache_guard = cache.lock().map_err(|_| "キャッシュロック失敗")?;
-    cache_guard.insert(cache_key, cached_data);
-  }
-  
-  Ok(series)
+// ---- ビジネスロジック層 ----
+pub struct YahooFinanceService {
+    client: reqwest::Client,
+    cache: Arc<SecureCacheManager>,
 }
 
-// ---- 解析：リターン/SMA/Sharpe（内部関数） ----
-fn analyze_series_internal(prices: Vec<f64>) -> Result<AnalysisResult, String> {
-  if prices.len() < 2 { return Err("データ不足".into()); }
-  let mut returns = vec![0.0; prices.len()];
-  for i in 1..prices.len() { returns[i] = prices[i] / prices[i-1] - 1.0; }
-  let n = prices.len() as f64;
-  let mean = returns.iter().sum::<f64>() / n;
-  let var = returns.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / n.max(1.0);
-  let std = var.sqrt();
-  let sharpe = if std > 0.0 { (mean * 252.0_f64.sqrt()) / std } else { 0.0 };
-
-  fn sma(xs: &Vec<f64>, w: usize) -> Vec<Option<f64>> {
-    let mut out = vec![None; xs.len()];
-    if w == 0 { return out; }
-    let mut s = 0.0;
-    for i in 0..xs.len() {
-      s += xs[i];
-      if i >= w { s -= xs[i-w]; }
-      if i + 1 >= w { out[i] = Some(s / (w as f64)); }
+impl YahooFinanceService {
+    pub fn new(cache: Arc<SecureCacheManager>) -> Self {
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(30))
+            .user_agent("Mozilla/5.0 (Tauri/Financial-Dashboard)")
+            .build()
+            .unwrap();
+        
+        Self { client, cache }
     }
-    out
-  }
-  Ok(AnalysisResult {
-    mean_return_daily: mean,
-    std_return_daily: std,
-    sharpe_annual: sharpe,
-    sma5: sma(&prices, 5),
-    sma20: sma(&prices, 20),
-    returns,
-  })
+
+    pub async fn get_financial_data(&self, symbol: &str, range: &str, interval: &str) -> Result<(SeriesPayload, AnalysisResult), AppError> {
+        let cache_key = self.generate_cache_key(symbol, range, interval);
+        
+        // キャッシュ確認
+        if let Some(cached_data) = self.cache.get(&cache_key).await {
+            info!("Cache HIT for {}", cache_key);
+            let mut payload = (*cached_data.data).clone();
+            payload.cached = Some(true);
+            payload.cached_at = Some(cached_data.cached_at.to_rfc3339());
+            return Ok((payload, (*cached_data.analysis).clone()));
+        }
+
+        info!("Cache MISS for {}, fetching from Yahoo Finance", cache_key);
+        
+        // 新しいデータを取得
+        let series_data = self.fetch_from_yahoo(symbol, range, interval).await?;
+        let analysis_result = self.analyze_financial_data(&series_data.prices)?;
+        
+        // キャッシュに保存
+        let cached_data = CachedData::new(series_data.clone(), analysis_result.clone(), 15);
+        if let Err(e) = self.cache.set(cache_key, cached_data).await {
+            error!("Failed to cache data: {}", e);
+        }
+        
+        let mut final_payload = series_data;
+        final_payload.cached = Some(false);
+        final_payload.cached_at = None;
+        
+        Ok((final_payload, analysis_result))
+    }
+
+    async fn fetch_from_yahoo(&self, symbol: &str, range: &str, interval: &str) -> Result<SeriesPayload, AppError> {
+        let url = format!(
+            "https://query1.finance.yahoo.com/v8/finance/chart/{}?range={}&interval={}&events=div,splits",
+            urlencoding::encode(symbol), range, interval
+        );
+        
+        debug!("Fetching from URL: {}", url);
+        
+        let response = self.client
+            .get(&url)
+            .send()
+            .await?;
+        
+        if !response.status().is_success() {
+            return Err(AppError::YahooFinance(format!("HTTP {}: {}", response.status(), url)));
+        }
+        
+        let chart_response: ChartResponse = response.json().await
+            .map_err(|e| AppError::YahooFinance(format!("JSON parse error: {}", e)))?;
+        
+        let result = chart_response.chart.result
+            .ok_or_else(|| AppError::YahooFinance("No result in response".to_string()))?
+            .into_iter()
+            .next()
+            .ok_or_else(|| AppError::YahooFinance("Empty result".to_string()))?;
+        
+        let timestamps = result.timestamp.unwrap_or_default();
+        let closes = result.indicators.quote.get(0)
+            .and_then(|q| q.close.clone())
+            .ok_or_else(|| AppError::YahooFinance("No close data".to_string()))?;
+
+        let mut dates = Vec::new();
+        let mut prices = Vec::new();
+        
+        for (i, &ts) in timestamps.iter().enumerate() {
+            if let Some(Some(price)) = closes.get(i) {
+                let dt = Utc.timestamp_opt(ts, 0).single()
+                    .unwrap_or_else(|| Utc.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(ts, 0).unwrap()));
+                dates.push(dt.date_naive().to_string());
+                prices.push(*price);
+            }
+        }
+        
+        if prices.len() < 2 {
+            return Err(AppError::DataParsing("Insufficient price data".to_string()));
+        }
+        
+        Ok(SeriesPayload {
+            symbol: result.meta.symbol,
+            dates,
+            prices,
+            cached: Some(false),
+            cached_at: None,
+        })
+    }
+
+    fn analyze_financial_data(&self, prices: &[f64]) -> Result<AnalysisResult, AppError> {
+        if prices.len() < 2 {
+            return Err(AppError::DataParsing("Insufficient data for analysis".to_string()));
+        }
+        
+        let mut returns = vec![0.0; prices.len()];
+        for i in 1..prices.len() {
+            returns[i] = prices[i] / prices[i-1] - 1.0;
+        }
+        
+        let n = prices.len() as f64;
+        let mean = returns.iter().sum::<f64>() / n;
+        let var = returns.iter().map(|x| (x - mean).powi(2)).sum::<f64>() / n.max(1.0);
+        let std = var.sqrt();
+        let sharpe = if std > 0.0 { (mean * 252.0_f64.sqrt()) / std } else { 0.0 };
+
+        let sma5 = Self::calculate_sma(prices, 5);
+        let sma20 = Self::calculate_sma(prices, 20);
+        
+        Ok(AnalysisResult {
+            mean_return_daily: mean,
+            std_return_daily: std,
+            sharpe_annual: sharpe,
+            sma5,
+            sma20,
+            returns,
+        })
+    }
+
+    fn calculate_sma(prices: &[f64], window: usize) -> Vec<Option<f64>> {
+        let mut result = vec![None; prices.len()];
+        if window == 0 { return result; }
+        
+        let mut sum = 0.0;
+        for i in 0..prices.len() {
+            sum += prices[i];
+            if i >= window { sum -= prices[i - window]; }
+            if i + 1 >= window { result[i] = Some(sum / (window as f64)); }
+        }
+        
+        result
+    }
+
+    fn generate_cache_key(&self, symbol: &str, range: &str, interval: &str) -> String {
+        format!("{}:{}:{}", symbol, range, interval)
+    }
 }
 
-// ---- 解析：キャッシュ対応外部コマンド ----
+// ---- Tauriコマンド層 ----
 #[tauri::command]
-fn analyze_series(symbol: String, range: String, interval: String, cache: tauri::State<'_, CacheStore>) -> Result<AnalysisResult, String> {
-  let cache_key = format!("{}_{}_{}",symbol, range, interval);
-  
-  let cache_guard = cache.lock().map_err(|_| "キャッシュロック失敗")?;
-  if let Some(cached_data) = cache_guard.get(&cache_key) {
-    if !cached_data.is_expired() {
-      return Ok(cached_data.analysis.clone());
+async fn fetch_yahoo(symbol: String, range: String, interval: String, service: tauri::State<'_, YahooFinanceService>) -> Result<SeriesPayload, String> {
+    match service.get_financial_data(&symbol, &range, &interval).await {
+        Ok((series_payload, _)) => Ok(series_payload),
+        Err(e) => {
+            error!("fetch_yahoo error: {}", e);
+            Err(e.to_string())
+        }
     }
-  }
-  
-  Err("データがキャッシュにありません。先にfetch_yahooを実行してください。".into())
+}
+
+#[tauri::command]
+async fn analyze_series(symbol: String, range: String, interval: String, service: tauri::State<'_, YahooFinanceService>) -> Result<AnalysisResult, String> {
+    match service.get_financial_data(&symbol, &range, &interval).await {
+        Ok((_, analysis_result)) => Ok(analysis_result),
+        Err(e) => {
+            error!("analyze_series error: {}", e);
+            Err(e.to_string())
+        }
+    }
+}
+
+// ---- キャッシュ管理コマンド ----
+#[tauri::command]
+async fn clear_cache(service: tauri::State<'_, YahooFinanceService>) -> Result<String, String> {
+    let count = service.cache.clear().await;
+    info!("Cache cleared: {} entries removed", count);
+    Ok(format!("{}件のキャッシュエントリを削除しました", count))
+}
+
+#[tauri::command]
+async fn get_cache_info(service: tauri::State<'_, YahooFinanceService>) -> Result<CacheStats, String> {
+    Ok(service.cache.get_stats().await)
+}
+
+#[tauri::command]
+async fn remove_expired_cache(service: tauri::State<'_, YahooFinanceService>) -> Result<String, String> {
+    let count = service.cache.cleanup_expired().await;
+    info!("Expired cache cleaned: {} entries removed", count);
+    Ok(format!("{}件の期限切れキャッシュを削除しました", count))
 }
 
 // ---- 保存：CSV ----
@@ -518,52 +600,43 @@ async fn save_user_settings(settings: UserSettings, app: tauri::AppHandle) -> Re
   Ok("設定を保存しました".to_string())
 }
 
-// ---- キャッシュ管理コマンド ----
-#[tauri::command]
-fn clear_cache(cache: tauri::State<'_, CacheStore>) -> Result<String, String> {
-  let mut cache_guard = cache.lock().map_err(|_| "キャッシュロック失敗")?;
-  let count = cache_guard.len();
-  cache_guard.clear();
-  Ok(format!("{}件のキャッシュエントリを削除しました", count))
-}
+// 重複した関数を削除
 
-#[tauri::command]
-fn get_cache_info(cache: tauri::State<'_, CacheStore>) -> Result<Vec<CacheEntry>, String> {
-  let cache_guard = cache.lock().map_err(|_| "キャッシュロック失敗")?;
-  let mut entries = Vec::new();
-  
-  for (key, cached_data) in cache_guard.iter() {
-    entries.push(CacheEntry {
-      key: key.clone(),
-      cached_data: cached_data.clone(),
-    });
-  }
-  
-  Ok(entries)
-}
-
-#[tauri::command]
-fn remove_expired_cache(cache: tauri::State<'_, CacheStore>) -> Result<String, String> {
-  let mut cache_guard = cache.lock().map_err(|_| "キャッシュロック失敗")?;
-  let original_count = cache_guard.len();
-  cache_guard.retain(|_, cached_data| !cached_data.is_expired());
-  let removed_count = original_count - cache_guard.len();
-  Ok(format!("{}件の期限切れキャッシュを削除しました", removed_count))
-}
 
 fn main() {
-  let cache_store: CacheStore = Arc::new(Mutex::new(HashMap::new()));
-  
-  tauri::Builder::default()
-    .plugin(tauri_plugin_dialog::init())
-    .plugin(tauri_plugin_opener::init())
-    .plugin(tauri_plugin_store::Builder::default().build())
-    .manage(cache_store)
-    .invoke_handler(tauri::generate_handler![
-      fetch_yahoo, analyze_series, save_csv, save_yaml,
-      clear_cache, get_cache_info, remove_expired_cache,
-      get_user_settings, save_user_settings
-    ])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    // ロギング初期化
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .init();
+    
+    info!("Starting Financial Dashboard Application");
+    
+    // セキュアキャッシュマネージャーを初期化 (最大100エントリ、50MB)
+    let cache_manager = Arc::new(SecureCacheManager::new(100, 50));
+    
+    // Yahoo Financeサービスを初期化
+    let yahoo_service = YahooFinanceService::new(cache_manager.clone());
+    
+    // バックグラウンドでキャッシュクリーンアップタスクを開始
+    let cleanup_cache = cache_manager.clone();
+    tokio::spawn(async move {
+        let mut interval = tokio::time::interval(std::time::Duration::from_secs(300)); // 5分間隔
+        loop {
+            interval.tick().await;
+            cleanup_cache.cleanup_expired().await;
+        }
+    });
+    
+    tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_store::Builder::default().build())
+        .manage(yahoo_service)
+        .invoke_handler(tauri::generate_handler![
+            fetch_yahoo, analyze_series, save_csv, save_yaml,
+            clear_cache, get_cache_info, remove_expired_cache,
+            get_user_settings, save_user_settings
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

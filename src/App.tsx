@@ -26,14 +26,11 @@ type UserSettings = {
   theme: string;
 };
 
-type CacheEntry = {
-  key: string;
-  cached_data: {
-    data: SeriesPayload;
-    analysis: AnalysisResult;
-    cached_at: string;
-    ttl_minutes: number;
-  };
+type CacheStats = {
+  entry_count: number;
+  size_bytes: number;
+  max_size_bytes: number;
+  session_id: string;
 };
 
 export default function App() {
@@ -44,8 +41,17 @@ export default function App() {
   const [series, setSeries] = useState<SeriesPayload | null>(null);
   const [ana, setAna] = useState<AnalysisResult | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
-  const [cacheEntries, setCacheEntries] = useState<CacheEntry[]>([]);
+  const [cacheStats, setCacheStats] = useState<CacheStats | null>(null);
   const [showCacheInfo, setShowCacheInfo] = useState(false);
+
+  // ユーティリティ関数
+  const formatBytes = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   // LocalStorage関連
   const saveToLocalStorage = (key: string, data: any) => {
@@ -127,11 +133,11 @@ export default function App() {
 
   async function loadCacheInfo() {
     try {
-      const entries = await invoke<CacheEntry[]>("get_cache_info");
-      setCacheEntries(entries);
+      const stats = await invoke<CacheStats>("get_cache_info");
+      setCacheStats(stats);
     } catch (e) {
       console.error("キャッシュ情報取得エラー:", e);
-      setCacheEntries([]);
+      setCacheStats(null);
     }
   }
 
@@ -139,7 +145,7 @@ export default function App() {
     try {
       const result = await invoke<string>("clear_cache");
       await message(result, { title: "キャッシュクリア", kind: "info" });
-      setCacheEntries([]);
+      setCacheStats(null);
       if (showCacheInfo) {
         loadCacheInfo();
       }
@@ -252,25 +258,37 @@ export default function App() {
           </div>
         )}
 
-        {/* キャッシュ情報テーブル */}
+        {/* キャッシュ統計情報 */}
         {showCacheInfo && (
           <div className="cache-info">
-            <h3>キャッシュエントリ ({cacheEntries.length}件)</h3>
-            {cacheEntries.length > 0 ? (
-              <div className="cache-table">
-                {cacheEntries.map((entry, index) => (
-                  <div key={index} className="cache-entry">
-                    <div className="cache-key">{entry.key}</div>
-                    <div className="cache-details">
-                      <span>取得: {new Date(entry.cached_data.cached_at).toLocaleString('ja-JP')}</span>
-                      <span>TTL: {entry.cached_data.ttl_minutes}分</span>
-                      <span>データ点数: {entry.cached_data.data.prices.length}</span>
-                    </div>
-                  </div>
-                ))}
+            <h3>キャッシュ統計</h3>
+            {cacheStats ? (
+              <div className="cache-stats">
+                <div className="stat-item">
+                  <span className="stat-label">エントリ数:</span>
+                  <span className="stat-value">{cacheStats.entry_count}件</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">使用メモリ:</span>
+                  <span className="stat-value">{formatBytes(cacheStats.size_bytes)}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">最大容量:</span>
+                  <span className="stat-value">{formatBytes(cacheStats.max_size_bytes)}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">使用率:</span>
+                  <span className="stat-value">
+                    {((cacheStats.size_bytes / cacheStats.max_size_bytes) * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">セッションID:</span>
+                  <span className="stat-value session-id">{cacheStats.session_id.substring(0, 8)}...</span>
+                </div>
               </div>
             ) : (
-              <p className="no-cache">キャッシュエントリはありません</p>
+              <p className="no-cache">キャッシュ統計を読み込み中...</p>
             )}
           </div>
         )}

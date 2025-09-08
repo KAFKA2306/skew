@@ -188,6 +188,38 @@
   margin: 0;
 }
 
+.cache-stats {
+  padding: 12px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.stat-value {
+  font-family: monospace;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.session-id {
+  font-size: 11px;
+  color: #6c757d !important;
+}
+
 /* Tablet styles */
 @media (max-width: 768px) {
   .app-container {
