@@ -1,1 +1,10 @@
-docs/*.png
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/.cargo/
+src-tauri/Cargo.lock
+.DS_Store
+src-tauri/gen/
+
+# Ignore PNG icons
+*.png
