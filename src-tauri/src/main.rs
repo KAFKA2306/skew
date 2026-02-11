@@ -370,10 +370,14 @@ impl YahooFinanceService {
         
         for (i, &ts) in timestamps.iter().enumerate() {
             if let Some(Some(price)) = closes.get(i) {
-                let dt = Utc.timestamp_opt(ts, 0).single()
-                    .unwrap_or_else(|| Utc.from_utc_datetime(&NaiveDateTime::from_timestamp_opt(ts, 0).unwrap()));
-                dates.push(dt.date_naive().to_string());
-                prices.push(*price);
+                // タイムスタンプの安全な変換（不正値はスキップ）
+                let dt_opt = Utc.timestamp_opt(ts, 0).single().or_else(|| {
+                    NaiveDateTime::from_timestamp_opt(ts, 0).map(|ndt| Utc.from_utc_datetime(&ndt))
+                });
+                if let Some(dt) = dt_opt {
+                    dates.push(dt.date_naive().to_string());
+                    prices.push(*price);
+                }
             }
         }
         
@@ -617,21 +621,25 @@ fn main() {
     // Yahoo Financeサービスを初期化
     let yahoo_service = YahooFinanceService::new(cache_manager.clone());
     
-    // バックグラウンドでキャッシュクリーンアップタスクを開始
-    let cleanup_cache = cache_manager.clone();
-    tokio::spawn(async move {
-        let mut interval = tokio::time::interval(std::time::Duration::from_secs(300)); // 5分間隔
-        loop {
-            interval.tick().await;
-            cleanup_cache.cleanup_expired().await;
-        }
-    });
-    
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .manage(yahoo_service)
+        // バックグラウンドでキャッシュクリーンアップタスクを開始（Tauriの非同期ランタイムを使用）
+        .setup({
+            let cleanup_cache = cache_manager.clone();
+            move |_| {
+                tauri::async_runtime::spawn(async move {
+                    let mut interval = tokio::time::interval(std::time::Duration::from_secs(300)); // 5分間隔
+                    loop {
+                        interval.tick().await;
+                        cleanup_cache.cleanup_expired().await;
+                    }
+                });
+                Ok(())
+            }
+        })
         .invoke_handler(tauri::generate_handler![
             fetch_yahoo, analyze_series, save_csv, save_yaml,
             clear_cache, get_cache_info, remove_expired_cache,

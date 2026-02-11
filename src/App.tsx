@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { open as saveDialog, message } from "@tauri-apps/plugin-dialog";
-import { openUrl } from "@tauri-apps/plugin-opener";
+import { save as saveDialog, message, confirm } from "@tauri-apps/plugin-dialog";
+import { open as openExternal } from "@tauri-apps/plugin-opener";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import "./App.css";
 
@@ -175,8 +175,10 @@ export default function App() {
         dates: series.dates, prices: series.prices, returns: ana.returns,
         sma5: ana.sma5, sma20: ana.sma20, output_path: out,
       });
-      await message("CSVを保存しました。開きますか？", { title: "保存", kind: "info" });
-      await openUrl(saved);
+      const ok = await confirm("CSVを保存しました。開きますか？", { title: "保存" });
+      if (ok) {
+        await openExternal(saved);
+      }
     } catch (e) { await message(String(e), { title: "保存エラー", kind: "error" }); }
   }
 
@@ -192,8 +194,10 @@ export default function App() {
         mean_return_daily: ana.mean_return_daily, std_return_daily: ana.std_return_daily, sharpe_annual: ana.sharpe_annual,
         output_path: out,
       });
-      await message("YAMLを保存しました。開きますか？", { title: "保存", kind: "info" });
-      await openUrl(saved);
+      const ok = await confirm("YAMLを保存しました。開きますか？", { title: "保存" });
+      if (ok) {
+        await openExternal(saved);
+      }
     } catch (e) { await message(String(e), { title: "保存エラー", kind: "error" }); }
   }
 
