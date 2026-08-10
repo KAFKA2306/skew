@@ -11,6 +11,7 @@ import {
   parseBatchSymbols,
   validateBrandProfile,
 } from "./creator-export";
+import "./CreatorExportPanel.css";
 
 type SeriesPayload = {
   symbol: string;
