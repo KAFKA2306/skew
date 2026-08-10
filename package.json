@@ -11,7 +11,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test": "echo \"No tests\" && exit 0"
+    "test": "rm -rf .tmp-test && tsc src/creator-export.ts --target ES2020 --module ES2020 --moduleResolution Node --outDir .tmp-test --skipLibCheck && node tests/creator-export-test.mjs && rm -rf .tmp-test"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.4.0",
