@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { save as saveDialog, message, confirm } from "@tauri-apps/plugin-dialog";
-import { open as openExternal } from "@tauri-apps/plugin-opener";
+import { openPath as openExternal } from "@tauri-apps/plugin-opener";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import CreatorExportPanel from "./CreatorExportPanel";
 import "./App.css";
