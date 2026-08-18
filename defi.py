@@ -39,6 +39,22 @@ AAVE_EVENT_SIGNATURES = {
 }
 UNISWAP_SWAP_SIGNATURE = "Swap(address,address,int256,int256,uint160,uint128,int24)"
 
+SELECTORS = {
+    "aave_get_pool": "0x026b1d5f",
+    "uniswap_get_pool": "0x1698ee82",
+    "token0": "0x0dfe1681",
+    "token1": "0xd21220a7",
+    "decimals": "0x313ce567",
+}
+AAVE_EVENT_TOPICS = {
+    "supply": "0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61",
+    "withdraw": "0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7",
+    "borrow": "0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0",
+    "repay": "0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051",
+    "liquidation": "0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286",
+}
+UNISWAP_SWAP_TOPIC = "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+
 
 def canonical_json(value: object) -> bytes:
     return (json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode()
@@ -132,18 +148,6 @@ class EthereumRPC:
 
     def call(self, method: str, params: list[Any]) -> Any:
         return self._send(method, params, store=False)[0]
-
-
-def rpc_sha3(rpc: EthereumRPC, signature: str) -> tuple[str, dict[str, Any]]:
-    value, ref = rpc.call_with_ref("web3_sha3", ["0x" + signature.encode().hex()])
-    if not isinstance(value, str) or len(value) != 66:
-        raise ValueError(f"web3_sha3 returned invalid hash for {signature}")
-    return value.lower(), ref
-
-
-def function_selector(rpc: EthereumRPC, signature: str) -> tuple[str, dict[str, Any]]:
-    topic, ref = rpc_sha3(rpc, signature)
-    return topic[:10], ref
 
 
 def eth_call(rpc: EthereumRPC, to: str, data: str, block_tag: str) -> tuple[str, dict[str, Any]]:
@@ -279,40 +283,30 @@ def resolve_contracts(rpc: EthereumRPC, finalized: dict[str, Any]) -> tuple[dict
     if int(chain_id, 16) != CHAIN_ID:
         raise ValueError(f"expected Ethereum chain_id 1, got {chain_id}")
 
-    aave_get_pool, ref = function_selector(rpc, "getPool()")
-    refs.append(ref)
-    aave_pool_raw, ref = eth_call(rpc, AAVE_PROVIDER, aave_get_pool, block_tag)
+    aave_pool_raw, ref = eth_call(rpc, AAVE_PROVIDER, SELECTORS["aave_get_pool"], block_tag)
     refs.append(ref)
     aave_pool = decode_address(aave_pool_raw)
     if aave_pool.lower() != AAVE_POOL_EXPECTED.lower():
         raise ValueError(f"Aave provider resolved unexpected pool {aave_pool}")
 
-    uniswap_get_pool, ref = function_selector(rpc, "getPool(address,address,uint24)")
-    refs.append(ref)
-    calldata = uniswap_get_pool + encode_address(USDC) + encode_address(WETH) + encode_uint(UNISWAP_FEE)
+    calldata = SELECTORS["uniswap_get_pool"] + encode_address(USDC) + encode_address(WETH) + encode_uint(UNISWAP_FEE)
     pool_raw, ref = eth_call(rpc, UNISWAP_FACTORY, calldata, block_tag)
     refs.append(ref)
     uniswap_pool = decode_address(pool_raw)
     if int(uniswap_pool, 16) == 0:
         raise ValueError("Uniswap factory returned zero pool")
 
-    token0_selector, ref = function_selector(rpc, "token0()")
+    token0_raw, ref = eth_call(rpc, uniswap_pool, SELECTORS["token0"], block_tag)
     refs.append(ref)
-    token1_selector, ref = function_selector(rpc, "token1()")
-    refs.append(ref)
-    decimals_selector, ref = function_selector(rpc, "decimals()")
-    refs.append(ref)
-    token0_raw, ref = eth_call(rpc, uniswap_pool, token0_selector, block_tag)
-    refs.append(ref)
-    token1_raw, ref = eth_call(rpc, uniswap_pool, token1_selector, block_tag)
+    token1_raw, ref = eth_call(rpc, uniswap_pool, SELECTORS["token1"], block_tag)
     refs.append(ref)
     token0 = decode_address(token0_raw)
     token1 = decode_address(token1_raw)
     if {token0.lower(), token1.lower()} != {USDC.lower(), WETH.lower()}:
         raise ValueError(f"unexpected Uniswap pool token pair {token0}/{token1}")
-    decimals0_raw, ref = eth_call(rpc, token0, decimals_selector, block_tag)
+    decimals0_raw, ref = eth_call(rpc, token0, SELECTORS["decimals"], block_tag)
     refs.append(ref)
-    decimals1_raw, ref = eth_call(rpc, token1, decimals_selector, block_tag)
+    decimals1_raw, ref = eth_call(rpc, token1, SELECTORS["decimals"], block_tag)
     refs.append(ref)
     decimals0 = decode_uint(decimals0_raw)
     decimals1 = decode_uint(decimals1_raw)
@@ -340,14 +334,8 @@ def resolve_contracts(rpc: EthereumRPC, finalized: dict[str, Any]) -> tuple[dict
         refs.append(ref)
         contracts.setdefault("code_sha256", {})[protocol] = code_hash
 
-    topics: dict[str, str] = {}
-    for name, signature in AAVE_EVENT_SIGNATURES.items():
-        topic, ref = rpc_sha3(rpc, signature)
-        refs.append(ref)
-        topics[f"aave_{name}"] = topic
-    swap_topic, ref = rpc_sha3(rpc, UNISWAP_SWAP_SIGNATURE)
-    refs.append(ref)
-    topics["uniswap_swap"] = swap_topic
+    topics = {f"aave_{name}": topic for name, topic in AAVE_EVENT_TOPICS.items()}
+    topics["uniswap_swap"] = UNISWAP_SWAP_TOPIC
     return contracts, topics, refs
 
 
