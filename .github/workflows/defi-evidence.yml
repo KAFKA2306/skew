@@ -1,0 +1,141 @@
+name: DeFi evidence
+
+on:
+  pull_request:
+    paths:
+      - defi.py
+      - test_defi.py
+      - README.md
+      - AGENTS.md
+      - .github/workflows/defi-evidence.yml
+  push:
+    branches: [main]
+    paths:
+      - defi.py
+      - test_defi.py
+      - README.md
+      - AGENTS.md
+      - .github/workflows/defi-evidence.yml
+  schedule:
+    - cron: '15 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: defi-evidence-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Compile and unit test
+        run: |
+          python -m py_compile defi.py test_defi.py
+          python -m unittest -v test_defi
+
+      - name: Collect finalized Ethereum evidence
+        env:
+          ETH_RPC_URL: https://eth.drpc.org
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python defi.py \
+              --data-root build/data/defi \
+              --api-dir build/api/v1/defi
+          else
+            python defi.py
+          fi
+
+      - name: Audit coverage and protocol boundaries
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          if '${{ github.event_name }}' == 'pull_request':
+              data_root = Path('build/data/defi')
+              api = Path('build/api/v1/defi')
+          else:
+              data_root = Path('data/defi')
+              api = Path('api/v1/defi')
+
+          index = json.loads((api / 'index.json').read_text())
+          aave = json.loads((api / 'aave-daily.json').read_text())['records']
+          uniswap = json.loads((api / 'uniswap-daily.json').read_text())['records']
+          contracts = json.loads((api / 'contracts.json').read_text())
+          provenance = json.loads((api / 'provenance.json').read_text())
+          coverage = index['coverage']
+
+          assert coverage['day_count'] >= 90, coverage
+          assert coverage['span_days'] >= 89, coverage
+          assert coverage['protocol_count'] == 2, coverage
+          assert coverage['aave_event_count'] > 0, coverage
+          assert coverage['aave_liquidation_count'] > 0, coverage
+          assert coverage['uniswap_swap_count'] > 0, coverage
+          totals = {name: sum(row['event_counts'][name] for row in aave) for name in ['supply','withdraw','borrow','repay','liquidation']}
+          assert all(value > 0 for value in totals.values()), totals
+          assert all(row['swap_count'] >= 0 for row in uniswap)
+          assert all(row['gross_token0'] >= 0 and row['gross_token1'] >= 0 for row in uniswap)
+          assert contracts['current']['aave_v3']['source_url'].startswith('https://github.com/aave-dao/')
+          assert contracts['current']['uniswap_v3']['source_url'].startswith('https://github.com/Uniswap/')
+          assert contracts['current']['aave_v3']['pool'].lower() == '0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2'
+          assert contracts['current']['uniswap_v3']['factory'].lower() == '0x1f98431c8ad98523631ae4a59f267346ea31f984'
+          assert contracts['current']['history']['changes']
+
+          refs = []
+          refs.extend(provenance['contract_raw_refs'])
+          for day in provenance['dates'].values():
+              refs.extend(day['aave_raw_refs'])
+              refs.extend(day['uniswap_raw_refs'])
+              refs.append(day['start_boundary']['raw_ref'])
+              refs.append(day['end_boundary']['raw_ref'])
+          for ref in refs:
+              raw = (data_root / ref['path']).read_bytes()
+              assert hashlib.sha256(raw).hexdigest() == ref['sha256']
+          PY
+
+      - name: Rebuild API from raw evidence
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            DATA_ROOT=build/data/defi
+            API_ROOT=build/api/v1/defi
+          else
+            DATA_ROOT=data/defi
+            API_ROOT=api/v1/defi
+          fi
+          rm -rf build/rebuilt-defi
+          python defi.py \
+            --offline \
+            --data-root "$DATA_ROOT" \
+            --api-dir build/rebuilt-defi
+          diff -ru "$API_ROOT" build/rebuilt-defi
+
+      - name: Upload pull-request evidence
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: defi-evidence
+          path: build
+          retention-days: 30
+
+      - name: Commit changed evidence and views
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add data/defi api/v1/defi
+          if git diff --cached --quiet; then
+            echo 'No DeFi evidence change.'
+            exit 0
+          fi
+          git commit -m 'data: update DeFi evidence'
+          git push
