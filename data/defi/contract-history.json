@@ -1,0 +1,32 @@
+{
+  "changes": [
+    {
+      "aave_v3": {
+        "addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+        "pool": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+        "source_url": "https://github.com/aave-dao/aave-address-book/blob/main/src/AaveV3Ethereum.sol"
+      },
+      "block_hash": "0xd5b54212f82f6d883d0e96d70695237219ce2d0c53e3e14017ac2044734efa94",
+      "block_number": 25783301,
+      "code_sha256": {
+        "aave_pool": "bf8a408a1f5440c167d91fa2d972deb23bb4d809e8dd089009885ec88a826f88",
+        "aave_provider": "e5416052b67aa0475bffe5707510a1981ffcc131d9b49066d51f6e25eb6c5c9f",
+        "uniswap_factory": "fd5e0ec0633afeb92b2f6b6cac36e13a9732bd1914f8158a78f127d51d54a572",
+        "uniswap_pool": "59233bb70ef9835c75d34c54f5ee02b41f60b673e2374d9a111b75af28541a58"
+      },
+      "fingerprint_sha256": "cb782eb12c7511846617c45694ac78c837f02dd5c003aae1e58723d6b6aef1bc",
+      "uniswap_v3": {
+        "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+        "fee": 3000,
+        "pool": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+        "source_url": "https://github.com/Uniswap/v3-periphery/blob/main/deploys.md",
+        "token0": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        "token0_decimals": 6,
+        "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "token1_decimals": 18
+      },
+      "valid_from_observed_at": "2026-08-18T16:54:47+00:00"
+    }
+  ],
+  "schema_version": 1
+}

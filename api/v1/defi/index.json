@@ -1,0 +1,54 @@
+{
+  "coverage": {
+    "aave_event_count": 392075,
+    "aave_liquidation_count": 2533,
+    "contract_change_count": 1,
+    "day_count": 92,
+    "first_date": "2026-05-18",
+    "last_date": "2026-08-17",
+    "protocol_count": 2,
+    "raw_evidence_count": 324,
+    "span_days": 91,
+    "uniswap_swap_count": 49010
+  },
+  "dataset": "Ethereum DeFi primary evidence",
+  "protocols": {
+    "aave_v3": {
+      "events": [
+        "supply",
+        "withdraw",
+        "borrow",
+        "repay",
+        "liquidation"
+      ],
+      "pool": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+      "source_url": "https://github.com/aave-dao/aave-address-book/blob/main/src/AaveV3Ethereum.sol"
+    },
+    "uniswap_v3": {
+      "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+      "fee": 3000,
+      "pool": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+      "source_url": "https://github.com/Uniswap/v3-periphery/blob/main/deploys.md"
+    }
+  },
+  "retrieved_at": "2026-08-18T17:17:41.396675+00:00",
+  "rules": [
+    "only complete UTC days whose end boundary is below the finalized Ethereum block are published",
+    "Aave and Uniswap observations are decoded from canonical contract logs, not aggregator metrics",
+    "asset-denominated Aave amounts are not summed across reserves with different units",
+    "Uniswap gross token deltas are token amounts and are not labeled as USD volume",
+    "contract resolution is checked against official Aave/Uniswap registries and Ethereum bytecode",
+    "contract-history fingerprints record future address/code changes instead of silently merging migrations",
+    "raw JSON-RPC responses are content-addressed with SHA-256 and required for offline rebuild"
+  ],
+  "schema_version": 1,
+  "views": {
+    "aave_daily": "aave-daily.json",
+    "aave_daily_csv": "aave-daily.csv",
+    "contracts": "contracts.json",
+    "daily": "daily.json",
+    "provenance": "provenance.json",
+    "uniswap_daily": "uniswap-daily.json",
+    "uniswap_daily_csv": "uniswap-daily.csv"
+  }
+}
