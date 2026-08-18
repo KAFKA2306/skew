@@ -89,7 +89,7 @@ jobs:
           assert contracts['current']['uniswap_v3']['source_url'].startswith('https://github.com/Uniswap/')
           assert contracts['current']['aave_v3']['pool'].lower() == '0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2'
           assert contracts['current']['uniswap_v3']['factory'].lower() == '0x1f98431c8ad98523631ae4a59f267346ea31f984'
-          assert contracts['current']['history']['changes']
+          assert contracts['history']['changes']
 
           refs = []
           refs.extend(provenance['contract_raw_refs'])
