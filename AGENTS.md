@@ -1,43 +1,31 @@
-# Repository Guidelines
+# AGENTS.md
 
-## Project Structure & Module Organization
-- `src/`: React + TypeScript UI (entry: `src/main.tsx`, app: `src/App.tsx`).
-- `index.html`: Vite mount point.
-- `src-tauri/`: Rust backend for Tauri 2 (`src-tauri/src/main.rs`).
-- Config: `vite.config.ts`, `tsconfig.json`, `src-tauri/tauri.conf.json`.
+## Repository responsibility
 
-## Build, Test, and Development Commands
-- `npm run dev`: Start Vite dev server for the web UI.
-- `npm run tauri dev`: Run desktop app (frontend + Rust backend).
-- `npm run build`: Type-check and build production assets.
-- `npm run preview`: Serve the built frontend locally.
-- `npm run tauri build`: Build production desktop binaries.
-- `npm test`: Currently prints "No tests" (no framework configured).
+This repository owns finalized Ethereum DeFi primary evidence for Aave V3 and Uniswap V3. Do not reintroduce the former stock/skewness/Tauri product surface.
 
-## Coding Style & Naming Conventions
-- TypeScript: strict mode enabled; prefer 2-space indentation, camelCase for vars/functions, PascalCase for React components, `.tsx` for components.
-- Imports: ES modules; keep paths relative and concise.
-- Strings: prefer double quotes to match existing files.
-- Rust: idiomatic Rust style; run `cargo fmt` locally before PRs.
-- Files: keep React components in `src/` and backend code in `src-tauri/src/`.
+## Source hierarchy
 
-## Testing Guidelines
-- Status: no tests configured. If adding tests:
-  - Frontend: Vitest + React Testing Library (`src/__tests__/*.test.tsx`).
-  - Backend: Rust unit/integration tests (`src-tauri/src/**/*_test.rs`).
-  - Aim for meaningful coverage around data fetch, analysis, and export paths.
-  - Run: `npm test` (frontend) and `cargo test` (backend) if added.
+1. Ethereum mainnet finalized block/log evidence
+2. Official Aave and Uniswap deployment/address repositories
+3. Derived daily views regenerated from stored raw evidence
 
-## Commit & Pull Request Guidelines
-- Commits: imperative, concise subject (e.g., "Add skewness docs", "Use SVG icon").
-- Group related changes; reference issues (`Fixes #123`) when applicable.
-- PRs should include:
-  - Summary of changes and rationale.
-  - Screenshots/GIFs for UI changes (charts, dialogs).
-  - Steps to validate (e.g., `npm run tauri dev`, expected behavior).
-  - Checklist: builds pass (`npm run build`, `npm run tauri build`).
+Aggregator TVL/volume, third-party indexed event APIs, guessed backfills, and silent fallbacks are not canonical inputs.
 
-## Security & Configuration Tips
-- No secrets required; Yahoo Finance is accessed anonymously from Rust via `reqwest`.
-- Avoid committing generated artifacts (CSV/YAML, packaged apps); update `.gitignore` if needed.
-- Keep dependencies minimal; prefer `rustls` TLS (already enabled) and pinned versions.
+## Implementation constraints
+
+- Python standard library only unless a dependency is strictly necessary for evidence correctness.
+- Unknown contract/event/schema states fail closed.
+- Preserve chain ID, block number, block hash, transaction/log provenance where available.
+- Keep protocol asset amounts in native units unless a primary price source is explicitly added; never relabel token deltas as USD volume.
+- Contract migrations/upgrades append history instead of mutating old evidence.
+- Delete obsolete duplicate paths rather than maintain compatibility with the removed Tauri/React/Rust prototype.
+
+## Required checks
+
+```bash
+python -m py_compile defi.py test_defi.py
+python -m unittest -v test_defi
+```
+
+Production evidence additionally requires the `DeFi evidence` GitHub Actions workflow to pass live collection, provenance audit, and offline deterministic rebuild.
