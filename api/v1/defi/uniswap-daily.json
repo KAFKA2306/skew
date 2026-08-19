@@ -1379,6 +1379,21 @@
       "token0_decimals": 6,
       "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
       "token1_decimals": 18
+    },
+    {
+      "date": "2026-08-18",
+      "fee": 3000,
+      "gross_token0": 466927.004301,
+      "gross_token0_raw": 466927004301,
+      "gross_token1": 245.53393733722805,
+      "gross_token1_raw": 245533937337228045031,
+      "pool": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+      "protocol": "uniswap_v3",
+      "swap_count": 326,
+      "token0": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "token0_decimals": 6,
+      "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "token1_decimals": 18
     }
   ],
   "schema_version": 1
