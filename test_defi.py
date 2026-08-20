@@ -2,6 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from build_raw_evidence_view import build as build_raw_evidence_view
 from defi import AAVE_EVENT_SIGNATURES, aave_daily, canonical_json, decode_int256, load_raw_ref, sha256, uniswap_daily
 
 
@@ -56,6 +57,36 @@ class DefiEvidenceTests(unittest.TestCase):
             path.write_text("{}")
             with self.assertRaisesRegex(ValueError, "raw evidence hash mismatch"):
                 load_raw_ref(root, ref)
+
+    def test_standard_raw_evidence_view_preserves_source_hash_and_path(self):
+        ref = {
+            "path": "raw/objects/" + "a" * 64 + ".json",
+            "sha256": "a" * 64,
+            "source_url": "https://eth.drpc.org",
+        }
+        provenance = {
+            "contract_raw_refs": [ref],
+            "dates": {
+                "2026-01-01": {
+                    "aave_raw_refs": [ref],
+                    "uniswap_raw_refs": [],
+                    "start_boundary": {"raw_ref": ref},
+                    "end_boundary": {"raw_ref": ref},
+                }
+            },
+        }
+        view = build_raw_evidence_view(provenance)
+        self.assertEqual(view["record_count"], 1)
+        self.assertEqual(
+            view["records"],
+            [
+                {
+                    "source_evidence_path": ref["path"],
+                    "source_sha256": ref["sha256"],
+                    "source_url": ref["source_url"],
+                }
+            ],
+        )
 
 
 if __name__ == "__main__":
