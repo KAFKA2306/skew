@@ -67,19 +67,21 @@ jobs:
             exit "$status"
           fi
 
-          rm -rf build/data/defi build/api/v1/defi
-          mkdir -p build/data build/api/v1
-          cp -a data/defi build/data/defi
-          cp -a api/v1/defi build/api/v1/defi
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            rm -rf build/data/defi build/api/v1/defi
+            mkdir -p build/data build/api/v1
+            cp -a data/defi build/data/defi
+            cp -a api/v1/defi build/api/v1/defi
+          fi
 
       - name: Build standardized raw evidence view
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            python build_raw_evidence_view.py
-          else
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             python build_raw_evidence_view.py \
               --provenance build/api/v1/defi/provenance.json \
               --output build/api/v1/defi/raw-evidence.json
+          else
+            python build_raw_evidence_view.py
           fi
 
       - name: Audit coverage and protocol boundaries
@@ -89,12 +91,12 @@ jobs:
           import json
           from pathlib import Path
 
-          if '${{ github.event_name }}' in {'schedule', 'workflow_dispatch'}:
-              data_root = Path('data/defi')
-              api = Path('api/v1/defi')
-          else:
+          if '${{ github.event_name }}' == 'pull_request':
               data_root = Path('build/data/defi')
               api = Path('build/api/v1/defi')
+          else:
+              data_root = Path('data/defi')
+              api = Path('api/v1/defi')
 
           index = json.loads((api / 'index.json').read_text())
           aave = json.loads((api / 'aave-daily.json').read_text())['records']
@@ -141,12 +143,12 @@ jobs:
 
       - name: Rebuild API from raw evidence
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            DATA_ROOT=data/defi
-            API_ROOT=api/v1/defi
-          else
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             DATA_ROOT=build/data/defi
             API_ROOT=build/api/v1/defi
+          else
+            DATA_ROOT=data/defi
+            API_ROOT=api/v1/defi
           fi
           rm -rf build/rebuilt-defi
           python defi.py \
@@ -167,7 +169,7 @@ jobs:
           retention-days: 30
 
       - name: Commit changed evidence and views
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: github.event_name != 'pull_request'
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
