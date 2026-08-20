@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - defi.py
+      - build_raw_evidence_view.py
       - test_defi.py
       - README.md
       - AGENTS.md
@@ -12,6 +13,7 @@ on:
     branches: [main]
     paths:
       - defi.py
+      - build_raw_evidence_view.py
       - test_defi.py
       - README.md
       - AGENTS.md
@@ -39,7 +41,7 @@ jobs:
 
       - name: Compile and unit test
         run: |
-          python -m py_compile defi.py test_defi.py
+          python -m py_compile defi.py build_raw_evidence_view.py test_defi.py
           python -m unittest -v test_defi
 
       - name: Collect finalized Ethereum evidence
@@ -52,6 +54,16 @@ jobs:
               --api-dir build/api/v1/defi
           else
             python defi.py
+          fi
+
+      - name: Build standardized raw evidence view
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python build_raw_evidence_view.py \
+              --provenance build/api/v1/defi/provenance.json \
+              --output build/api/v1/defi/raw-evidence.json
+          else
+            python build_raw_evidence_view.py
           fi
 
       - name: Audit coverage and protocol boundaries
@@ -73,6 +85,7 @@ jobs:
           uniswap = json.loads((api / 'uniswap-daily.json').read_text())['records']
           contracts = json.loads((api / 'contracts.json').read_text())
           provenance = json.loads((api / 'provenance.json').read_text())
+          raw_evidence = json.loads((api / 'raw-evidence.json').read_text())
           coverage = index['coverage']
 
           assert coverage['day_count'] >= 90, coverage
@@ -101,6 +114,13 @@ jobs:
           for ref in refs:
               raw = (data_root / ref['path']).read_bytes()
               assert hashlib.sha256(raw).hexdigest() == ref['sha256']
+
+          assert raw_evidence['record_count'] == len({ref['path'] for ref in refs})
+          for row in raw_evidence['records']:
+              assert row['source_evidence_path'].startswith('raw/objects/')
+              assert row['source_url'].startswith('https://')
+              raw = (data_root / row['source_evidence_path']).read_bytes()
+              assert hashlib.sha256(raw).hexdigest() == row['source_sha256']
           PY
 
       - name: Rebuild API from raw evidence
@@ -117,6 +137,9 @@ jobs:
             --offline \
             --data-root "$DATA_ROOT" \
             --api-dir build/rebuilt-defi
+          python build_raw_evidence_view.py \
+            --provenance build/rebuilt-defi/provenance.json \
+            --output build/rebuilt-defi/raw-evidence.json
           diff -ru "$API_ROOT" build/rebuilt-defi
 
       - name: Upload pull-request evidence
