@@ -48,13 +48,26 @@ jobs:
         env:
           ETH_RPC_URL: https://eth.drpc.org
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            python defi.py \
-              --data-root build/data/defi \
-              --api-dir build/api/v1/defi
-          else
-            python defi.py
-          fi
+          set +e
+          for attempt in 1 2 3 4; do
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              python defi.py \
+                --data-root build/data/defi \
+                --api-dir build/api/v1/defi
+            else
+              python defi.py
+            fi
+            status=$?
+            if [ "$status" -eq 0 ]; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 4 ]; then
+              exit "$status"
+            fi
+            sleep_seconds=$((2 ** (attempt - 1)))
+            echo "Ethereum RPC collection failed on attempt ${attempt}; retrying in ${sleep_seconds}s."
+            sleep "$sleep_seconds"
+          done
 
       - name: Build standardized raw evidence view
         run: |
