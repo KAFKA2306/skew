@@ -32,6 +32,20 @@ Other finance repositories should reference this repository's versioned DeFi art
 - Contract migrations/upgrades append history instead of mutating old evidence.
 - Delete obsolete duplicate paths rather than maintain compatibility with the removed Tauri/React/Rust prototype.
 
+## Merge and release are separate
+
+### PR merge conditions
+
+A PR may merge when the deterministic repository-local contract is correct on the exact reviewed revision: raw/provenance semantics hold, focused tests pass, offline rebuild succeeds where affected, and no unresolved review or correctness blocker remains.
+
+Live Ethereum RPC success, a fresh finalized block, production publication, or public endpoint availability is **not** a merge condition unless the PR specifically changes the live/release mechanism and that mechanism must be validated before merge.
+
+### Product/data release conditions
+
+Release is a separate post-merge decision. Treat DeFi evidence as released only after the merged `main` revision is read back and the release requirements in scope are actually executed: live finalized-chain collection when required, provenance audit, published/generated artifacts, public surface if any, and rollback/rebuild path where applicable.
+
+A merged PR does not prove live collection. A live RPC blocker may block release without invalidating a correctly merged deterministic change. Report merge and release independently.
+
 ## Required checks
 
 ```bash
@@ -39,8 +53,8 @@ python -m py_compile defi.py test_defi.py
 python -m unittest -v test_defi
 ```
 
-Production evidence additionally requires the `DeFi evidence` GitHub Actions workflow to pass live collection, provenance audit, and offline deterministic rebuild. A check or runtime layer that did not run is not PASS.
+These checks are merge evidence. The `DeFi evidence` workflow or equivalent live collection/provenance run is release evidence when live production acquisition is in scope. A check or runtime layer that did not run is not PASS.
 
 ## Completion report
 
-Report verified evidence/capability Before -> After, canonical raw/hash evidence, Issue/PR/commit/check/public evidence when applicable, duplicate/manual work removed, and the remaining verified blocker.
+Report verified evidence/capability Before -> After, canonical raw/hash evidence, Issue/PR/commit/check evidence, then report `merged` and `released` separately with direct evidence for each. Include duplicate/manual work removed and the remaining verified blocker.
