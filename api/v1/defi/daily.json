@@ -575,6 +575,12 @@
       "aave_liquidation_count": 20,
       "date": "2026-08-21",
       "uniswap_swap_count": 851
+    },
+    {
+      "aave_event_count": 5611,
+      "aave_liquidation_count": 6,
+      "date": "2026-08-22",
+      "uniswap_swap_count": 723
     }
   ],
   "schema_version": 1
