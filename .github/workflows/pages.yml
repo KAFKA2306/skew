@@ -1,0 +1,111 @@
+name: Deploy Pages
+
+on:
+  pull_request:
+    paths:
+      - web/**
+      - api/v1/defi/daily.json
+      - api/v1/defi/index.json
+      - api/v1/defi/contracts.json
+      - .github/workflows/pages.yml
+  push:
+    branches: [main]
+    paths:
+      - web/**
+      - api/v1/defi/daily.json
+      - api/v1/defi/index.json
+      - api/v1/defi/contracts.json
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Validate complete-day semantics and UI
+        run: |
+          python -m json.tool api/v1/defi/daily.json >/dev/null
+          python -m json.tool api/v1/defi/index.json >/dev/null
+          python -m json.tool api/v1/defi/contracts.json >/dev/null
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('api/v1/defi')
+          idx=json.loads((root/'index.json').read_text())
+          daily=json.loads((root/'daily.json').read_text())['records']
+          assert len(daily)==idx['coverage']['day_count']
+          assert daily[-1]['date']==idx['coverage']['last_date']
+          assert all(x['aave_event_count']>=x['aave_liquidation_count']>=0 for x in daily)
+          assert all(x['uniswap_swap_count']>=0 for x in daily)
+          assert 'only complete UTC days' in idx['rules'][0]
+          assert any('not labeled as USD volume' in x for x in idx['rules'])
+          html=Path('web/index.html').read_text()
+          for marker in ('FINALIZED ETHEREUM LOGS','7-day average','USD volume','current partial UTC day'):
+              assert marker in html, marker
+          start=html.index('<script type="module">')+len('<script type="module">')
+          end=html.index('</script>',start)
+          Path('/tmp/dashboard.mjs').write_text(html[start:end])
+          PY
+          node --check /tmp/dashboard.mjs
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build small public projection
+        run: |
+          mkdir -p web/api/v1/defi
+          cp api/v1/defi/daily.json web/api/v1/defi/daily.json
+          cp api/v1/defi/index.json web/api/v1/defi/index.json
+          cp api/v1/defi/contracts.json web/api/v1/defi/contracts.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('web/deployment.json').write_text(json.dumps({'source_commit':os.environ['GITHUB_SHA']},indent=2)+'\n')
+          PY
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify exact deployed revision and latest complete day
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python - <<'PY'
+          import json, os, time
+          from urllib.parse import urljoin
+          from urllib.request import urlopen
+          base=os.environ['PAGE_URL']; expected=os.environ['GITHUB_SHA']; last=None
+          for _ in range(30):
+              try:
+                  with urlopen(urljoin(base,'deployment.json'),timeout=10) as r: dep=json.load(r)
+                  with urlopen(urljoin(base,'api/v1/defi/index.json'),timeout=10) as r: idx=json.load(r)
+                  with urlopen(urljoin(base,'api/v1/defi/daily.json'),timeout=10) as r: daily=json.load(r)
+                  with urlopen(base,timeout=10) as r: html=r.read().decode()
+                  assert dep['source_commit']==expected
+                  assert daily['records'][-1]['date']==idx['coverage']['last_date']
+                  assert 'DeFi activityは' in html and '7-day average' in html
+                  print({'page_url':base,'source_commit':expected,'latest_day':idx['coverage']['last_date']})
+                  break
+              except Exception as exc:
+                  last=exc; time.sleep(2)
+          else:
+              raise SystemExit(f'production verification failed: {last}')
+          PY

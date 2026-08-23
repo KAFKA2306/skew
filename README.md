@@ -1,10 +1,21 @@
 # DeFi Primary Evidence
 
-[![DeFi evidence](https://github.com/KAFKA2306/skew/actions/workflows/defi-evidence.yml/badge.svg)](https://github.com/KAFKA2306/skew/actions/workflows/defi-evidence.yml)
+[![DeFi evidence](https://github.com/KAFKA2306/DeFi/actions/workflows/defi-evidence.yml/badge.svg)](https://github.com/KAFKA2306/DeFi/actions/workflows/defi-evidence.yml)
+[![Deploy Pages](https://github.com/KAFKA2306/DeFi/actions/workflows/pages.yml/badge.svg)](https://github.com/KAFKA2306/DeFi/actions/workflows/pages.yml)
 
-Ethereum上のDeFi activityを、**canonical contractのfinalized raw logsから再生成できるdataset**として保存するrepositoryです。旧skewness/Tauri株価UIは正準責務から削除し、`api/v1/defi/` を正準成果物にします。
+Ethereum上のDeFi activityを、**canonical contractのfinalized raw logsから再生成できるdataset**として保存します。`api/v1/defi/` が正準成果物です。
 
-## 正準data
+## Public dashboard
+
+- Daily entry point: https://kafka2306.github.io/DeFi/
+- latest complete UTC dayのAave event count / LiquidationCall count / Uniswap swap count
+- previous complete dayとprior 7-day averageとの同一定義比較
+- 30 complete-day history
+- contract identityとcanonical data contractへの直接link
+
+Pagesは`daily.json / index.json / contracts.json`だけをsmall public projectionとして使い、巨大なraw/provenance/event ledgerを複製しません。TVL、USD volume、APR、revenue、独自stress scoreは推測しません。
+
+## Canonical data
 
 - [dataset index](api/v1/defi/index.json)
 - [daily cross-protocol view](api/v1/defi/daily.json)
@@ -27,11 +38,11 @@ Aave公式address bookのEthereum `POOL_ADDRESSES_PROVIDER` と `POOL` を正準
 - Repay
 - LiquidationCall
 
-各日についてevent countと関与reserve addressを保持します。reserveごとにdecimals/asset identityが異なるため、異なるassetのamountを1つの「volume」へ合算しません。
+各日についてevent countと関与reserve addressを保持します。reserveごとにdecimals/asset identityが異なるため、異なるassetのamountを1つのvolumeへ合算しません。
 
 ## Uniswap V3
 
-Uniswap公式deployment registryのEthereum `UniswapV3Factory` を起点に、USDC/WETH 0.3% poolをfactory `getPool()`からruntime解決します。pool addressを第三者indexから取得しません。
+Uniswap公式deployment registryのEthereum `UniswapV3Factory` を起点に、USDC/WETH 0.3% poolをfactory `getPool()`からruntime解決します。
 
 Swap logから次を日次集計します。
 
@@ -41,7 +52,7 @@ Swap logから次を日次集計します。
 - token0/token1 identity・decimals
 - fee tier
 
-`gross_token0` / `gross_token1` はraw token amountであり、USD volumeとは呼びません。
+`gross_token0` / `gross_token1` はraw token amountであり、USD volumeではありません。
 
 ## Provenance contract
 
@@ -59,30 +70,17 @@ api/v1/defi/*.json|csv
 
 各dayはUTC complete dayです。日付境界をEthereum block timestampから解決し、`from_block / to_block / block_hash` とraw `eth_getLogs` responseを保持します。current partial dayは公開しません。
 
-contract stateはfinalized blockでbytecode hashまで確認し、address/code fingerprintが変わった場合だけ`contract-history.json`へappendします。migrationやupgradeを暗黙に同一contractとして扱いません。
+contract stateはfinalized blockでbytecode hashまで確認し、address/code fingerprintが変わった場合だけhistoryへappendします。migrationやupgradeを暗黙に同一contractとして扱いません。
 
-## 集計しないもの
-
-DefiLlama等のaggregator TVL/volumeを正準値として保存しません。raw protocol logから直接観測できないTVL・USD換算・APR・revenue等を推測で補完しません。
-
-## 実行
-
-標準ライブラリのみです。
+## Verification
 
 ```bash
 python defi.py
-```
-
-保存済みraw evidenceから再生成:
-
-```bash
 python defi.py --offline
-```
-
-テスト:
-
-```bash
 python -m unittest -v test_defi
 ```
 
-Tracking issue: https://github.com/KAFKA2306/skew/issues/11
+- `DeFi evidence` は一次chain evidenceとoffline rebuildを検証します。
+- `Deploy Pages` はPRでcomplete-day semanticsとdashboard JSを検証し、mainではsmall public projectionをdeployしてexact commit SHAとlatest canonical dayを照合します。
+
+Tracking issue: https://github.com/KAFKA2306/DeFi/issues/17
