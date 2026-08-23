@@ -8,12 +8,13 @@ Ethereum上のDeFi activityを、**canonical contractのfinalized raw logsから
 ## Public dashboard
 
 - Daily entry point: https://kafka2306.github.io/DeFi/
-- latest complete UTC dayのAave event count / LiquidationCall count / Uniswap swap count
+- latest complete UTC dayのAave Supply / Withdraw / Borrow / Repay / LiquidationCall countとUniswap swap count
 - previous complete dayとprior 7-day averageとの同一定義比較
 - 30 complete-day history
+- latest dayのfinalized block range / boundary block hash / raw evidence SHA-256へ直接到達
 - contract identityとcanonical data contractへの直接link
 
-Pagesは`daily.json / index.json / contracts.json`だけをsmall public projectionとして使い、巨大なraw/provenance/event ledgerを複製しません。TVL、USD volume、APR、revenue、独自stress scoreは推測しません。
+Pagesはdaily views、contract identity、そしてcanonical `provenance.json`から決定論的に生成したcompact `evidence-locators.json`だけをpublic projectionとして使います。巨大なraw response本体やfull provenance ledgerはPagesへ複製しません。raw locatorはrepository内のcontent-addressed evidenceへ戻ります。TVL、USD volume、APR、revenue、独自stress scoreは推測しません。
 
 ## Canonical data
 
@@ -22,9 +23,11 @@ Pagesは`daily.json / index.json / contracts.json`だけをsmall public projecti
 - [Aave V3 daily events](api/v1/defi/aave-daily.json)
 - [Uniswap V3 daily swaps](api/v1/defi/uniswap-daily.json)
 - [contract registry / history](api/v1/defi/contracts.json)
+- [daily evidence locators](api/v1/defi/evidence-locators.json)
+- [standard raw-evidence index](api/v1/defi/raw-evidence.json)
 - [raw provenance](api/v1/defi/provenance.json)
 
-`DeFi evidence` workflowが毎日Ethereum mainnetのfinalized dataを取得し、raw JSON-RPC responseをSHA-256で固定した後、Aave/Uniswapのdaily viewを生成します。CIでは保存済みraw evidenceだけからAPIを再生成し、live生成物との差分がないことを検証します。
+`DeFi evidence` workflowが毎日Ethereum mainnetのfinalized dataを取得し、raw JSON-RPC responseをSHA-256で固定した後、Aave/Uniswapのdaily viewとcompact evidence locatorを生成します。CIでは保存済みraw evidenceだけからAPIを再生成し、live生成物との差分がないことを検証します。
 
 ## Aave V3
 
@@ -63,9 +66,11 @@ Ethereum finalized JSON-RPC
   ↓
 data/defi/raw/objects/<sha256>.json
   ↓
-data/defi/evidence-index.json
-  ↓
-api/v1/defi/*.json|csv
+api/v1/defi/provenance.json
+  ├─ raw-evidence.json
+  └─ evidence-locators.json
+       ↓
+GitHub Pages daily evidence links
 ```
 
 各dayはUTC complete dayです。日付境界をEthereum block timestampから解決し、`from_block / to_block / block_hash` とraw `eth_getLogs` responseを保持します。current partial dayは公開しません。
@@ -77,10 +82,12 @@ contract stateはfinalized blockでbytecode hashまで確認し、address/code f
 ```bash
 python defi.py
 python defi.py --offline
+python build_raw_evidence_view.py
 python -m unittest -v test_defi
 ```
 
-- `DeFi evidence` は一次chain evidenceとoffline rebuildを検証します。
-- `Deploy Pages` はPRでcomplete-day semanticsとdashboard JSを検証し、mainではsmall public projectionをdeployしてexact commit SHAとlatest canonical dayを照合します。
+- `DeFi evidence` は一次chain evidence、compact locator、raw SHA-256、offline rebuildを検証します。
+- `Deploy Pages` はPRでcomplete-day semantics・locator alignment・dashboard JSを検証し、mainではexact commit SHA、latest canonical day、finalized block range、production locatorを照合します。
+- production smoke成功後だけTracking Issue #17へexact-SHA evidenceを記録します。
 
 Tracking issue: https://github.com/KAFKA2306/DeFi/issues/17
