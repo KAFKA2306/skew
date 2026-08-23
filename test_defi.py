@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from build_raw_evidence_view import build as build_raw_evidence_view
+from build_raw_evidence_view import build as build_raw_evidence_view, build_locators
 from defi import AAVE_EVENT_SIGNATURES, aave_daily, canonical_json, decode_int256, load_raw_ref, sha256, uniswap_daily
 
 
@@ -65,13 +65,19 @@ class DefiEvidenceTests(unittest.TestCase):
             "source_url": "https://eth.drpc.org",
         }
         provenance = {
+            "chain_id": 1,
+            "contract_history": {"schema_version": 1, "changes": []},
             "contract_raw_refs": [ref],
             "dates": {
                 "2026-01-01": {
+                    "from_block": 100,
+                    "to_block": 199,
+                    "aave_log_count": 3,
                     "aave_raw_refs": [ref],
-                    "uniswap_raw_refs": [],
-                    "start_boundary": {"raw_ref": ref},
-                    "end_boundary": {"raw_ref": ref},
+                    "uniswap_log_count": 2,
+                    "uniswap_raw_refs": [ref],
+                    "start_boundary": {"block_number": 99, "block_hash": "0xstart", "block_timestamp": "2025-12-31T23:59:59+00:00", "raw_ref": ref},
+                    "end_boundary": {"block_number": 199, "block_hash": "0xend", "block_timestamp": "2026-01-01T23:59:59+00:00", "raw_ref": ref},
                 }
             },
         }
@@ -79,14 +85,18 @@ class DefiEvidenceTests(unittest.TestCase):
         self.assertEqual(view["record_count"], 1)
         self.assertEqual(
             view["records"],
-            [
-                {
-                    "source_evidence_path": ref["path"],
-                    "source_sha256": ref["sha256"],
-                    "source_url": ref["source_url"],
-                }
-            ],
+            [{"source_evidence_path": ref["path"], "source_sha256": ref["sha256"], "source_url": ref["source_url"]}],
         )
+
+        locators = build_locators(provenance)
+        self.assertEqual(locators["chain_id"], 1)
+        self.assertEqual(locators["record_count"], 1)
+        day = locators["records"][0]
+        self.assertEqual((day["from_block"], day["to_block"]), (100, 199))
+        self.assertEqual(day["start_boundary"]["block_hash"], "0xstart")
+        self.assertEqual(day["end_boundary"]["block_hash"], "0xend")
+        self.assertEqual(day["aave"]["raw_refs"][0]["source_sha256"], "a" * 64)
+        self.assertEqual(day["uniswap"]["raw_refs"][0]["source_evidence_path"], ref["path"])
 
 
 if __name__ == "__main__":
