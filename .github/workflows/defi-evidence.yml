@@ -74,12 +74,13 @@ jobs:
             cp -a api/v1/defi build/api/v1/defi
           fi
 
-      - name: Build standardized raw evidence view
+      - name: Build standardized evidence views
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             python build_raw_evidence_view.py \
               --provenance build/api/v1/defi/provenance.json \
-              --output build/api/v1/defi/raw-evidence.json
+              --output build/api/v1/defi/raw-evidence.json \
+              --locators-output build/api/v1/defi/evidence-locators.json
           else
             python build_raw_evidence_view.py
           fi
@@ -99,11 +100,13 @@ jobs:
               api = Path('api/v1/defi')
 
           index = json.loads((api / 'index.json').read_text())
+          daily = json.loads((api / 'daily.json').read_text())['records']
           aave = json.loads((api / 'aave-daily.json').read_text())['records']
           uniswap = json.loads((api / 'uniswap-daily.json').read_text())['records']
           contracts = json.loads((api / 'contracts.json').read_text())
           provenance = json.loads((api / 'provenance.json').read_text())
           raw_evidence = json.loads((api / 'raw-evidence.json').read_text())
+          locators = json.loads((api / 'evidence-locators.json').read_text())
           coverage = index['coverage']
 
           assert coverage['day_count'] >= 90, coverage
@@ -139,6 +142,27 @@ jobs:
               assert row['source_url'].startswith('https://')
               raw = (data_root / row['source_evidence_path']).read_bytes()
               assert hashlib.sha256(raw).hexdigest() == row['source_sha256']
+
+          assert locators['chain_id'] == 1
+          assert locators['record_count'] == coverage['day_count'] == len(daily)
+          assert [row['date'] for row in locators['records']] == [row['date'] for row in daily]
+          latest = locators['records'][-1]
+          canonical_latest = provenance['dates'][daily[-1]['date']]
+          assert latest['date'] == coverage['last_date']
+          assert latest['from_block'] == canonical_latest['from_block']
+          assert latest['to_block'] == canonical_latest['to_block']
+          assert latest['start_boundary']['block_hash'] == canonical_latest['start_boundary']['block_hash']
+          assert latest['end_boundary']['block_hash'] == canonical_latest['end_boundary']['block_hash']
+          assert latest['aave']['log_count'] == canonical_latest['aave_log_count']
+          assert latest['uniswap']['log_count'] == canonical_latest['uniswap_log_count']
+          for protocol in ('aave','uniswap'):
+              for ref in latest[protocol]['raw_refs']:
+                  raw = (data_root / ref['source_evidence_path']).read_bytes()
+                  assert hashlib.sha256(raw).hexdigest() == ref['source_sha256']
+          for boundary in ('start_boundary','end_boundary'):
+              ref = latest[boundary]['raw_ref']
+              raw = (data_root / ref['source_evidence_path']).read_bytes()
+              assert hashlib.sha256(raw).hexdigest() == ref['source_sha256']
           PY
 
       - name: Rebuild API from raw evidence
@@ -157,7 +181,8 @@ jobs:
             --api-dir build/rebuilt-defi
           python build_raw_evidence_view.py \
             --provenance build/rebuilt-defi/provenance.json \
-            --output build/rebuilt-defi/raw-evidence.json
+            --output build/rebuilt-defi/raw-evidence.json \
+            --locators-output build/rebuilt-defi/evidence-locators.json
           diff -ru "$API_ROOT" build/rebuilt-defi
 
       - name: Upload pull-request evidence
