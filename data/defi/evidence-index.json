@@ -56,7 +56,7 @@
             "data": "0x026b1d5f",
             "to": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e"
           },
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "f64124327630dc6aa541edc06ce6a52278754d628ee2b884fd1f4c48f6fbae47",
@@ -74,7 +74,7 @@
             "data": "0x1698ee82000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000bb8",
             "to": "0x1F98431c8aD98523631AE4a59f267346ea31F984"
           },
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "23650461e84472260e9b4a6f8464764d660fec1891313480ef5b766e466cb3d4",
@@ -92,7 +92,7 @@
             "data": "0x0dfe1681",
             "to": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
           },
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "078eb311f5a1587fbf76908901696f0b02043bb25e182a4d083c700df7dd5e10",
@@ -110,7 +110,7 @@
             "data": "0xd21220a7",
             "to": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
           },
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "c50651e9d1baa5930fea7f379db3e9df2066b1362d8ec130505ac7c734ac6dbf",
@@ -128,7 +128,7 @@
             "data": "0x313ce567",
             "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
           },
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "a8e53e985d991287a59fcf4bbb7025aba3b8d84640a0918a8f925c953287fedf",
@@ -146,7 +146,7 @@
             "data": "0x313ce567",
             "to": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
           },
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "c68b5528fe1e7afc876ad2f0323455a581a6bdaf46ae73724948ac096778a73c",
@@ -161,7 +161,7 @@
         "method": "eth_getCode",
         "params": [
           "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "2e1b3771fd97e4d01847f33b38353126f3759ef571d92742ff8d1520143437bd",
@@ -176,7 +176,7 @@
         "method": "eth_getCode",
         "params": [
           "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "3f36ff8c96f8053942ce3437bdddb25f5c617ce15ebc49b708ece354d354ac8a",
@@ -191,7 +191,7 @@
         "method": "eth_getCode",
         "params": [
           "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "538c39ca37d01604463bf3fd031a20053f2f72b620f9bd31c4110ff4e0c08b82",
@@ -206,7 +206,7 @@
         "method": "eth_getCode",
         "params": [
           "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
-          "0x189fd6b"
+          "0x18a76a8"
         ]
       },
       "sha256": "3ec0b66010f33d11cba96f12c629ca633fd3352e8afa612061a44d22d9363154",
@@ -214,7 +214,7 @@
       "source_url": "https://eth.drpc.org"
     },
     {
-      "path": "raw/objects/09eaa53b3b31119080182bb93135a4616a1cac4f8fbc8d00928f3ea26c5dec9d.json",
+      "path": "raw/objects/bb3f4bced3fb386612465c8d0642d93df662f161c66f748f23db4e2514b26171.json",
       "request": {
         "id": 1,
         "jsonrpc": "2.0",
@@ -224,8 +224,8 @@
           false
         ]
       },
-      "sha256": "09eaa53b3b31119080182bb93135a4616a1cac4f8fbc8d00928f3ea26c5dec9d",
-      "size_bytes": 15460,
+      "sha256": "bb3f4bced3fb386612465c8d0642d93df662f161c66f748f23db4e2514b26171",
+      "size_bytes": 19187,
       "source_url": "https://eth.drpc.org"
     }
   ],
@@ -235,15 +235,15 @@
       "pool": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
       "source_url": "https://github.com/aave-dao/aave-address-book/blob/main/src/AaveV3Ethereum.sol"
     },
-    "block_hash": "0xaa23148fa916579df55585c854e4bfe6226d359dba5b76595b0369358989f7e0",
-    "block_number": 25820523,
+    "block_hash": "0xb611344df129252f30fdd624646f6071ce6c29f9edc6f8aabe805de310213754",
+    "block_number": 25851560,
     "code_sha256": {
       "aave_pool": "bf8a408a1f5440c167d91fa2d972deb23bb4d809e8dd089009885ec88a826f88",
       "aave_provider": "e5416052b67aa0475bffe5707510a1981ffcc131d9b49066d51f6e25eb6c5c9f",
       "uniswap_factory": "fd5e0ec0633afeb92b2f6b6cac36e13a9732bd1914f8158a78f127d51d54a572",
       "uniswap_pool": "59233bb70ef9835c75d34c54f5ee02b41f60b673e2374d9a111b75af28541a58"
     },
-    "observed_at": "2026-08-23T21:23:35+00:00",
+    "observed_at": "2026-08-28T05:10:47+00:00",
     "uniswap_v3": {
       "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
       "fee": 3000,
@@ -10981,6 +10981,506 @@
           "source_url": "https://eth.drpc.org"
         }
       ]
+    },
+    "2026-08-23": {
+      "aave_log_count": 5019,
+      "aave_raw_refs": [
+        {
+          "path": "raw/objects/8f3d7f58d5687bd6ac775ef61b1ff342ec7afbb35e672777ba76b2dfb0d00ac3.json",
+          "request": {
+            "id": 96,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+                "fromBlock": "0x189e46f",
+                "toBlock": "0x18a0079",
+                "topics": [
+                  [
+                    "0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61",
+                    "0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7",
+                    "0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0",
+                    "0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051",
+                    "0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286"
+                  ]
+                ]
+              }
+            ]
+          },
+          "sha256": "8f3d7f58d5687bd6ac775ef61b1ff342ec7afbb35e672777ba76b2dfb0d00ac3",
+          "size_bytes": 3873892,
+          "source_url": "https://eth.drpc.org"
+        }
+      ],
+      "end_boundary": {
+        "block_hash": "0x9367015d21f9f83bf7fb25cc18bdf8b6c0dc6ba83121067c45c087d86d86d81d",
+        "block_number": 25821305,
+        "block_timestamp": "2026-08-23T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0.json",
+          "request": {
+            "id": 39,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a0079",
+              false
+            ]
+          },
+          "sha256": "24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0",
+          "size_bytes": 25335,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-24T00:00:00+00:00"
+      },
+      "from_block": 25814127,
+      "start_boundary": {
+        "block_hash": "0xa12dad3daceefbf67c3b8187dad19e6da1e7d104a36a233c92e4e0726b62a555",
+        "block_number": 25814126,
+        "block_timestamp": "2026-08-22T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/5629b7bfab74f05d748827f6912ae8a925f7503a25c2c72239d10e8c2d43bbab.json",
+          "request": {
+            "id": 25,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x189e46e",
+              false
+            ]
+          },
+          "sha256": "5629b7bfab74f05d748827f6912ae8a925f7503a25c2c72239d10e8c2d43bbab",
+          "size_bytes": 17723,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-23T00:00:00+00:00"
+      },
+      "to_block": 25821305,
+      "uniswap_log_count": 763,
+      "uniswap_raw_refs": [
+        {
+          "path": "raw/objects/0b56130e4bac05331f78036256475afc5bd60b4e0b26f15f9aa5f8a91a30fc40.json",
+          "request": {
+            "id": 97,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "fromBlock": "0x189e46f",
+                "toBlock": "0x18a0079",
+                "topics": [
+                  "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+                ]
+              }
+            ]
+          },
+          "sha256": "0b56130e4bac05331f78036256475afc5bd60b4e0b26f15f9aa5f8a91a30fc40",
+          "size_bytes": 679628,
+          "source_url": "https://eth.drpc.org"
+        }
+      ]
+    },
+    "2026-08-24": {
+      "aave_log_count": 5442,
+      "aave_raw_refs": [
+        {
+          "path": "raw/objects/5a07ef74298e5d163de61295b8cbcba302403f738ce03a504896404e2aa2bab2.json",
+          "request": {
+            "id": 98,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+                "fromBlock": "0x18a007a",
+                "toBlock": "0x18a1c83",
+                "topics": [
+                  [
+                    "0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61",
+                    "0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7",
+                    "0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0",
+                    "0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051",
+                    "0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286"
+                  ]
+                ]
+              }
+            ]
+          },
+          "sha256": "5a07ef74298e5d163de61295b8cbcba302403f738ce03a504896404e2aa2bab2",
+          "size_bytes": 4197019,
+          "source_url": "https://eth.drpc.org"
+        }
+      ],
+      "end_boundary": {
+        "block_hash": "0x45e78487511b3b9a431e516e784de488c8315cc4315c33acfdba8a8926988f81",
+        "block_number": 25828483,
+        "block_timestamp": "2026-08-24T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989.json",
+          "request": {
+            "id": 53,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a1c83",
+              false
+            ]
+          },
+          "sha256": "31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989",
+          "size_bytes": 19118,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-25T00:00:00+00:00"
+      },
+      "from_block": 25821306,
+      "start_boundary": {
+        "block_hash": "0x9367015d21f9f83bf7fb25cc18bdf8b6c0dc6ba83121067c45c087d86d86d81d",
+        "block_number": 25821305,
+        "block_timestamp": "2026-08-23T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0.json",
+          "request": {
+            "id": 39,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a0079",
+              false
+            ]
+          },
+          "sha256": "24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0",
+          "size_bytes": 25335,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-24T00:00:00+00:00"
+      },
+      "to_block": 25828483,
+      "uniswap_log_count": 692,
+      "uniswap_raw_refs": [
+        {
+          "path": "raw/objects/36fba486818a96f636cf1db0d217209a8e5af60cb617172ddebc8e4326a90087.json",
+          "request": {
+            "id": 99,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "fromBlock": "0x18a007a",
+                "toBlock": "0x18a1c83",
+                "topics": [
+                  "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+                ]
+              }
+            ]
+          },
+          "sha256": "36fba486818a96f636cf1db0d217209a8e5af60cb617172ddebc8e4326a90087",
+          "size_bytes": 616225,
+          "source_url": "https://eth.drpc.org"
+        }
+      ]
+    },
+    "2026-08-25": {
+      "aave_log_count": 6135,
+      "aave_raw_refs": [
+        {
+          "path": "raw/objects/83ff85491e016763188740baf32310f4ea32785f194e9e38286b184eef853955.json",
+          "request": {
+            "id": 100,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+                "fromBlock": "0x18a1c84",
+                "toBlock": "0x18a3889",
+                "topics": [
+                  [
+                    "0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61",
+                    "0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7",
+                    "0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0",
+                    "0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051",
+                    "0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286"
+                  ]
+                ]
+              }
+            ]
+          },
+          "sha256": "83ff85491e016763188740baf32310f4ea32785f194e9e38286b184eef853955",
+          "size_bytes": 4739399,
+          "source_url": "https://eth.drpc.org"
+        }
+      ],
+      "end_boundary": {
+        "block_hash": "0x8643113fc704a773c275b8fa53084941e5db67ff9a35336602e691ee56d75e5a",
+        "block_number": 25835657,
+        "block_timestamp": "2026-08-25T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501.json",
+          "request": {
+            "id": 67,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a3889",
+              false
+            ]
+          },
+          "sha256": "1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501",
+          "size_bytes": 22156,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-26T00:00:00+00:00"
+      },
+      "from_block": 25828484,
+      "start_boundary": {
+        "block_hash": "0x45e78487511b3b9a431e516e784de488c8315cc4315c33acfdba8a8926988f81",
+        "block_number": 25828483,
+        "block_timestamp": "2026-08-24T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989.json",
+          "request": {
+            "id": 53,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a1c83",
+              false
+            ]
+          },
+          "sha256": "31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989",
+          "size_bytes": 19118,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-25T00:00:00+00:00"
+      },
+      "to_block": 25835657,
+      "uniswap_log_count": 630,
+      "uniswap_raw_refs": [
+        {
+          "path": "raw/objects/d57780f56afecb743020176d857113609a738b2412dc02068d79daf5aed914dd.json",
+          "request": {
+            "id": 101,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "fromBlock": "0x18a1c84",
+                "toBlock": "0x18a3889",
+                "topics": [
+                  "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+                ]
+              }
+            ]
+          },
+          "sha256": "d57780f56afecb743020176d857113609a738b2412dc02068d79daf5aed914dd",
+          "size_bytes": 561093,
+          "source_url": "https://eth.drpc.org"
+        }
+      ]
+    },
+    "2026-08-26": {
+      "aave_log_count": 4789,
+      "aave_raw_refs": [
+        {
+          "path": "raw/objects/47bacb0d8852126cd57f03c2e6369a663e1156f3e28c97ec73bd7005e672c8d2.json",
+          "request": {
+            "id": 102,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+                "fromBlock": "0x18a388a",
+                "toBlock": "0x18a548d",
+                "topics": [
+                  [
+                    "0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61",
+                    "0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7",
+                    "0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0",
+                    "0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051",
+                    "0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286"
+                  ]
+                ]
+              }
+            ]
+          },
+          "sha256": "47bacb0d8852126cd57f03c2e6369a663e1156f3e28c97ec73bd7005e672c8d2",
+          "size_bytes": 3701836,
+          "source_url": "https://eth.drpc.org"
+        }
+      ],
+      "end_boundary": {
+        "block_hash": "0x94aad9c666f9e74404dc80662127154cef6bb0cc9b28e583b20cd2108154aa55",
+        "block_number": 25842829,
+        "block_timestamp": "2026-08-26T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1.json",
+          "request": {
+            "id": 81,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a548d",
+              false
+            ]
+          },
+          "sha256": "dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1",
+          "size_bytes": 21248,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-27T00:00:00+00:00"
+      },
+      "from_block": 25835658,
+      "start_boundary": {
+        "block_hash": "0x8643113fc704a773c275b8fa53084941e5db67ff9a35336602e691ee56d75e5a",
+        "block_number": 25835657,
+        "block_timestamp": "2026-08-25T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501.json",
+          "request": {
+            "id": 67,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a3889",
+              false
+            ]
+          },
+          "sha256": "1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501",
+          "size_bytes": 22156,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-26T00:00:00+00:00"
+      },
+      "to_block": 25842829,
+      "uniswap_log_count": 480,
+      "uniswap_raw_refs": [
+        {
+          "path": "raw/objects/683516fbcbee1f1097aaba81efc8449af6f724b4018ac0e6abb186eefaae3c88.json",
+          "request": {
+            "id": 103,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "fromBlock": "0x18a388a",
+                "toBlock": "0x18a548d",
+                "topics": [
+                  "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+                ]
+              }
+            ]
+          },
+          "sha256": "683516fbcbee1f1097aaba81efc8449af6f724b4018ac0e6abb186eefaae3c88",
+          "size_bytes": 427458,
+          "source_url": "https://eth.drpc.org"
+        }
+      ]
+    },
+    "2026-08-27": {
+      "aave_log_count": 5895,
+      "aave_raw_refs": [
+        {
+          "path": "raw/objects/769e7340841ea05f745e4ace96d94aa2e933093529c77a914eda7b35183659e4.json",
+          "request": {
+            "id": 104,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2",
+                "fromBlock": "0x18a548e",
+                "toBlock": "0x18a7099",
+                "topics": [
+                  [
+                    "0x2b627736bca15cd5381dcf80b0bf11fd197d01a037c52b927a881a10fb73ba61",
+                    "0x3115d1449a7b732c986cba18244e897a450f61e1bb8d589cd2e69e6c8924f9f7",
+                    "0xb3d084820fb1a9decffb176436bd02558d15fac9b0ddfed8c465bc7359d7dce0",
+                    "0xa534c8dbe71f871f9f3530e97a74601fea17b426cae02e1c5aee42c96c784051",
+                    "0xe413a321e8681d831f4dbccbca790d2952b56f977908e45be37335533e005286"
+                  ]
+                ]
+              }
+            ]
+          },
+          "sha256": "769e7340841ea05f745e4ace96d94aa2e933093529c77a914eda7b35183659e4",
+          "size_bytes": 4570096,
+          "source_url": "https://eth.drpc.org"
+        }
+      ],
+      "end_boundary": {
+        "block_hash": "0x69999ae658e1c3d736f9f883896d37709cf633ba3d9cc48e0efa693c639ce522",
+        "block_number": 25850009,
+        "block_timestamp": "2026-08-27T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/506bfd949986bd79daaced070a4be53b6aa3fd80666bdd82043a504017ac9fe2.json",
+          "request": {
+            "id": 95,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a7099",
+              false
+            ]
+          },
+          "sha256": "506bfd949986bd79daaced070a4be53b6aa3fd80666bdd82043a504017ac9fe2",
+          "size_bytes": 16709,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-28T00:00:00+00:00"
+      },
+      "from_block": 25842830,
+      "start_boundary": {
+        "block_hash": "0x94aad9c666f9e74404dc80662127154cef6bb0cc9b28e583b20cd2108154aa55",
+        "block_number": 25842829,
+        "block_timestamp": "2026-08-26T23:59:59+00:00",
+        "raw_ref": {
+          "path": "raw/objects/dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1.json",
+          "request": {
+            "id": 81,
+            "jsonrpc": "2.0",
+            "method": "eth_getBlockByNumber",
+            "params": [
+              "0x18a548d",
+              false
+            ]
+          },
+          "sha256": "dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1",
+          "size_bytes": 21248,
+          "source_url": "https://eth.drpc.org"
+        },
+        "target_time": "2026-08-27T00:00:00+00:00"
+      },
+      "to_block": 25850009,
+      "uniswap_log_count": 472,
+      "uniswap_raw_refs": [
+        {
+          "path": "raw/objects/88d8536713b6b395bae2463646ea564fbc2757afe00f5550e2fcda0c1085fe68.json",
+          "request": {
+            "id": 105,
+            "jsonrpc": "2.0",
+            "method": "eth_getLogs",
+            "params": [
+              {
+                "address": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+                "fromBlock": "0x18a548e",
+                "toBlock": "0x18a7099",
+                "topics": [
+                  "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
+                ]
+              }
+            ]
+          },
+          "sha256": "88d8536713b6b395bae2463646ea564fbc2757afe00f5550e2fcda0c1085fe68",
+          "size_bytes": 420489,
+          "source_url": "https://eth.drpc.org"
+        }
+      ]
     }
   },
   "event_topics": {
@@ -10992,11 +11492,11 @@
     "uniswap_swap": "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67"
   },
   "finalized": {
-    "block_hash": "0xaa23148fa916579df55585c854e4bfe6226d359dba5b76595b0369358989f7e0",
-    "block_number": 25820523,
-    "block_timestamp": "2026-08-23T21:23:35+00:00",
+    "block_hash": "0xb611344df129252f30fdd624646f6071ce6c29f9edc6f8aabe805de310213754",
+    "block_number": 25851560,
+    "block_timestamp": "2026-08-28T05:10:47+00:00",
     "raw_ref": {
-      "path": "raw/objects/09eaa53b3b31119080182bb93135a4616a1cac4f8fbc8d00928f3ea26c5dec9d.json",
+      "path": "raw/objects/bb3f4bced3fb386612465c8d0642d93df662f161c66f748f23db4e2514b26171.json",
       "request": {
         "id": 1,
         "jsonrpc": "2.0",
@@ -11006,11 +11506,11 @@
           false
         ]
       },
-      "sha256": "09eaa53b3b31119080182bb93135a4616a1cac4f8fbc8d00928f3ea26c5dec9d",
-      "size_bytes": 15460,
+      "sha256": "bb3f4bced3fb386612465c8d0642d93df662f161c66f748f23db4e2514b26171",
+      "size_bytes": 19187,
       "source_url": "https://eth.drpc.org"
     }
   },
-  "retrieved_at": "2026-08-23T21:37:38.622605+00:00",
+  "retrieved_at": "2026-08-28T05:25:58.482660+00:00",
   "schema_version": 1
 }

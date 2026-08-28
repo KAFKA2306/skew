@@ -32,7 +32,7 @@
     ],
     "schema_version": 1
   },
-  "record_count": 97,
+  "record_count": 102,
   "records": [
     {
       "aave": {
@@ -4584,6 +4584,231 @@
           {
             "source_evidence_path": "raw/objects/2cc6586277ea26343c2aae82c992d9bb8f47dae3f001268779a15b2f5ead3324.json",
             "source_sha256": "2cc6586277ea26343c2aae82c992d9bb8f47dae3f001268779a15b2f5ead3324",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      }
+    },
+    {
+      "aave": {
+        "log_count": 5019,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/8f3d7f58d5687bd6ac775ef61b1ff342ec7afbb35e672777ba76b2dfb0d00ac3.json",
+            "source_sha256": "8f3d7f58d5687bd6ac775ef61b1ff342ec7afbb35e672777ba76b2dfb0d00ac3",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      },
+      "date": "2026-08-23",
+      "end_boundary": {
+        "block_hash": "0x9367015d21f9f83bf7fb25cc18bdf8b6c0dc6ba83121067c45c087d86d86d81d",
+        "block_number": 25821305,
+        "block_timestamp": "2026-08-23T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0.json",
+          "source_sha256": "24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "from_block": 25814127,
+      "start_boundary": {
+        "block_hash": "0xa12dad3daceefbf67c3b8187dad19e6da1e7d104a36a233c92e4e0726b62a555",
+        "block_number": 25814126,
+        "block_timestamp": "2026-08-22T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/5629b7bfab74f05d748827f6912ae8a925f7503a25c2c72239d10e8c2d43bbab.json",
+          "source_sha256": "5629b7bfab74f05d748827f6912ae8a925f7503a25c2c72239d10e8c2d43bbab",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "to_block": 25821305,
+      "uniswap": {
+        "log_count": 763,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/0b56130e4bac05331f78036256475afc5bd60b4e0b26f15f9aa5f8a91a30fc40.json",
+            "source_sha256": "0b56130e4bac05331f78036256475afc5bd60b4e0b26f15f9aa5f8a91a30fc40",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      }
+    },
+    {
+      "aave": {
+        "log_count": 5442,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/5a07ef74298e5d163de61295b8cbcba302403f738ce03a504896404e2aa2bab2.json",
+            "source_sha256": "5a07ef74298e5d163de61295b8cbcba302403f738ce03a504896404e2aa2bab2",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      },
+      "date": "2026-08-24",
+      "end_boundary": {
+        "block_hash": "0x45e78487511b3b9a431e516e784de488c8315cc4315c33acfdba8a8926988f81",
+        "block_number": 25828483,
+        "block_timestamp": "2026-08-24T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989.json",
+          "source_sha256": "31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "from_block": 25821306,
+      "start_boundary": {
+        "block_hash": "0x9367015d21f9f83bf7fb25cc18bdf8b6c0dc6ba83121067c45c087d86d86d81d",
+        "block_number": 25821305,
+        "block_timestamp": "2026-08-23T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0.json",
+          "source_sha256": "24cb839ba53059ac7427bc03ca82d3ab9cc7c07ac07f4f5f03384b6c3ca161e0",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "to_block": 25828483,
+      "uniswap": {
+        "log_count": 692,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/36fba486818a96f636cf1db0d217209a8e5af60cb617172ddebc8e4326a90087.json",
+            "source_sha256": "36fba486818a96f636cf1db0d217209a8e5af60cb617172ddebc8e4326a90087",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      }
+    },
+    {
+      "aave": {
+        "log_count": 6135,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/83ff85491e016763188740baf32310f4ea32785f194e9e38286b184eef853955.json",
+            "source_sha256": "83ff85491e016763188740baf32310f4ea32785f194e9e38286b184eef853955",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      },
+      "date": "2026-08-25",
+      "end_boundary": {
+        "block_hash": "0x8643113fc704a773c275b8fa53084941e5db67ff9a35336602e691ee56d75e5a",
+        "block_number": 25835657,
+        "block_timestamp": "2026-08-25T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501.json",
+          "source_sha256": "1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "from_block": 25828484,
+      "start_boundary": {
+        "block_hash": "0x45e78487511b3b9a431e516e784de488c8315cc4315c33acfdba8a8926988f81",
+        "block_number": 25828483,
+        "block_timestamp": "2026-08-24T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989.json",
+          "source_sha256": "31fef63279f9338627162b616103a8510e5fc4455ebd6ec0e84cdce8c7986989",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "to_block": 25835657,
+      "uniswap": {
+        "log_count": 630,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/d57780f56afecb743020176d857113609a738b2412dc02068d79daf5aed914dd.json",
+            "source_sha256": "d57780f56afecb743020176d857113609a738b2412dc02068d79daf5aed914dd",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      }
+    },
+    {
+      "aave": {
+        "log_count": 4789,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/47bacb0d8852126cd57f03c2e6369a663e1156f3e28c97ec73bd7005e672c8d2.json",
+            "source_sha256": "47bacb0d8852126cd57f03c2e6369a663e1156f3e28c97ec73bd7005e672c8d2",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      },
+      "date": "2026-08-26",
+      "end_boundary": {
+        "block_hash": "0x94aad9c666f9e74404dc80662127154cef6bb0cc9b28e583b20cd2108154aa55",
+        "block_number": 25842829,
+        "block_timestamp": "2026-08-26T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1.json",
+          "source_sha256": "dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "from_block": 25835658,
+      "start_boundary": {
+        "block_hash": "0x8643113fc704a773c275b8fa53084941e5db67ff9a35336602e691ee56d75e5a",
+        "block_number": 25835657,
+        "block_timestamp": "2026-08-25T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501.json",
+          "source_sha256": "1f0fd8c79e0d611a2bc5bdc8b570a4224f4e96d176b6f4e489504a757c45e501",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "to_block": 25842829,
+      "uniswap": {
+        "log_count": 480,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/683516fbcbee1f1097aaba81efc8449af6f724b4018ac0e6abb186eefaae3c88.json",
+            "source_sha256": "683516fbcbee1f1097aaba81efc8449af6f724b4018ac0e6abb186eefaae3c88",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      }
+    },
+    {
+      "aave": {
+        "log_count": 5895,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/769e7340841ea05f745e4ace96d94aa2e933093529c77a914eda7b35183659e4.json",
+            "source_sha256": "769e7340841ea05f745e4ace96d94aa2e933093529c77a914eda7b35183659e4",
+            "source_url": "https://eth.drpc.org"
+          }
+        ]
+      },
+      "date": "2026-08-27",
+      "end_boundary": {
+        "block_hash": "0x69999ae658e1c3d736f9f883896d37709cf633ba3d9cc48e0efa693c639ce522",
+        "block_number": 25850009,
+        "block_timestamp": "2026-08-27T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/506bfd949986bd79daaced070a4be53b6aa3fd80666bdd82043a504017ac9fe2.json",
+          "source_sha256": "506bfd949986bd79daaced070a4be53b6aa3fd80666bdd82043a504017ac9fe2",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "from_block": 25842830,
+      "start_boundary": {
+        "block_hash": "0x94aad9c666f9e74404dc80662127154cef6bb0cc9b28e583b20cd2108154aa55",
+        "block_number": 25842829,
+        "block_timestamp": "2026-08-26T23:59:59+00:00",
+        "raw_ref": {
+          "source_evidence_path": "raw/objects/dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1.json",
+          "source_sha256": "dd2e7fef4892e4bf68f9db2173ced546dcbe0874533847fb9d0f9c109e0c25d1",
+          "source_url": "https://eth.drpc.org"
+        }
+      },
+      "to_block": 25850009,
+      "uniswap": {
+        "log_count": 472,
+        "raw_refs": [
+          {
+            "source_evidence_path": "raw/objects/88d8536713b6b395bae2463646ea564fbc2757afe00f5550e2fcda0c1085fe68.json",
+            "source_sha256": "88d8536713b6b395bae2463646ea564fbc2757afe00f5550e2fcda0c1085fe68",
             "source_url": "https://eth.drpc.org"
           }
         ]
