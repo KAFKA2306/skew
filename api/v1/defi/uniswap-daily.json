@@ -1559,6 +1559,36 @@
       "token0_decimals": 6,
       "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
       "token1_decimals": 18
+    },
+    {
+      "date": "2026-08-30",
+      "fee": 3000,
+      "gross_token0": 7017568.810542,
+      "gross_token0_raw": 7017568810542,
+      "gross_token1": 2840.5512612961766,
+      "gross_token1_raw": 2840551261296176756339,
+      "pool": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+      "protocol": "uniswap_v3",
+      "swap_count": 615,
+      "token0": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "token0_decimals": 6,
+      "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "token1_decimals": 18
+    },
+    {
+      "date": "2026-08-31",
+      "fee": 3000,
+      "gross_token0": 4395994.515,
+      "gross_token0_raw": 4395994515000,
+      "gross_token1": 1798.5115860541407,
+      "gross_token1_raw": 1798511586054140617321,
+      "pool": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8",
+      "protocol": "uniswap_v3",
+      "swap_count": 394,
+      "token0": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "token0_decimals": 6,
+      "token1": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "token1_decimals": 18
     }
   ],
   "schema_version": 1
